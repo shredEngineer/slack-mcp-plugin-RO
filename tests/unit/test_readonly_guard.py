@@ -82,6 +82,13 @@ def test_namespaced_slack_write_is_denied():
     assert is_deny(*run_guard("mcp__slack-plugin__slack__slack_send_message"))
 
 
+def test_plugin_namespaced_slack_tools():
+    # The real form when installed as a user-scope plugin: the MCP server shows
+    # as `plugin:slack:slack`, so tool names carry that segment.
+    assert is_deny(*run_guard("mcp__plugin:slack:slack__slack_send_message"))
+    assert is_pass(*run_guard("mcp__plugin:slack:slack__slack_read_channel"))
+
+
 @pytest.mark.parametrize(
     "tool",
     ["Read", "Bash", "Edit", "mcp__github__create_issue", "mcp__other__do_thing"],
