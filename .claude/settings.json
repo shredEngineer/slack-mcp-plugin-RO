@@ -32,6 +32,26 @@
       "WebFetch(domain:docs.slack.dev)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)"
+    ],
+    "deny": [
+      "mcp__slack__slack_send_message",
+      "mcp__slack__slack_send_message_draft",
+      "mcp__slack__slack_add_reaction",
+      "mcp__slack__slack_schedule_message",
+      "mcp__slack__slack_create_canvas"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__.*slack.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/hooks/slack-readonly-guard.py\""
+          }
+        ]
+      }
     ]
   }
 }

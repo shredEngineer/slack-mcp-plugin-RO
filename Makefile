@@ -1,8 +1,13 @@
 VENV := .venv
 PYTHON := $(VENV)/bin/python
-PIP := $(VENV)/bin/pip
 RUFF := $(VENV)/bin/ruff
 DEEPEVAL := $(VENV)/bin/deepeval
+
+# uv creates the venv and installs deps. The stdlib `venv` module needs
+# ensurepip, which isn't available on every Python build (e.g. distro Pythons
+# without python3-venv); uv has no such dependency and is much faster.
+UV := uv
+UV_PIP := $(UV) pip install --python $(PYTHON)
 
 # Load .env if present (see .env.example) and export its vars to recipe
 # subprocesses. The leading `-` no-ops when .env is absent; bare `export` only
@@ -25,8 +30,7 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 $(VENV):
-	python3 -m venv $(VENV)
-	$(PIP) install --upgrade pip
+	$(UV) venv $(VENV)
 
 $(OLLAMA_BIN):
 	mkdir -p $(OLLAMA_DIR)/bin $(OLLAMA_MODELS)
@@ -56,12 +60,10 @@ install: install-test install-tools $(OLLAMA_BIN) ## Set up everything (venv + d
 	fi
 
 install-test: $(VENV) ## Install test dependencies (deepeval)
-	$(PIP) install --upgrade pip
-	$(PIP) install -e ".[test]"
+	$(UV_PIP) -e ".[test]"
 
 install-tools: $(VENV) ## Install linting/formatting tools (ruff)
-	$(PIP) install --upgrade pip
-	$(PIP) install -e ".[tools]"
+	$(UV_PIP) -e ".[tools]"
 
 clean: ## Remove virtual environment, Ollama, and local Cursor install
 	-$(PYTHON) scripts/cursor.py uninstall
