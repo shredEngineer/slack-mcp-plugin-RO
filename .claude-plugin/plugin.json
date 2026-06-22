@@ -2,7 +2,6 @@
   "name": "slack",
   "description": "Read-only Slack integration for searching and reading messages, threads, channels, and user profiles. Writing/posting to Slack is hard-disabled.",
   "version": "1.0.0",
-  "hooks": "./hooks/hooks.json",
   "author": {
     "name": "Slack",
     "url": "https://slack.com"

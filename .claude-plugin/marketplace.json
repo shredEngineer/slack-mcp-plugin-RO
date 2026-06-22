@@ -1,0 +1,17 @@
+{
+  "name": "slack-mcp-plugin-ro",
+  "owner": {
+    "name": "shredEngineer"
+  },
+  "metadata": {
+    "description": "Read-only Slack MCP plugin: search and read Slack; writing is hard-disabled."
+  },
+  "plugins": [
+    {
+      "name": "slack",
+      "source": "./",
+      "description": "Read-only Slack integration. Search and read messages, threads, channels, and user profiles. Writing/posting is hard-disabled via a default-deny PreToolUse guard hook.",
+      "version": "1.0.0"
+    }
+  ]
+}
