@@ -28,4 +28,4 @@ description: Generate a standup update based on your recent Slack activity
    - None / Item 1
    ```
 
-6. Present the standup to the user for review. They can edit, adjust, or ask you to post it to a specific channel.
+6. Present the standup to the user for review. They can edit or adjust it, then copy it into Slack and post it themselves — this plugin is read-only and does not post.

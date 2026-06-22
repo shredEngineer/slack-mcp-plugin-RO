@@ -1,6 +1,6 @@
 {
   "name": "slack",
-  "description": "Slack MCP server. Search channels, send messages, and perform other Slack actions through MCP-compatible clients.",
+  "description": "Read-only Slack MCP integration. Search and read channels, threads, and users through MCP-compatible clients. Writing/posting is hard-disabled (enforced under Claude Code; see README).",
   "version": "1.0.0",
   "mcpServers": "../.cursor-mcp.json",
   "author": {

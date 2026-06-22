@@ -1,15 +1,18 @@
-# Slack Plugin
+# Slack Plugin (Read-Only)
 
-This repository contains the configuration needed to integrate Slack with Cursor IDE and Claude Code. The plugin enables your agents to interact directly with your Slack workspace, allowing you to search messages, send communications, manage canvases, and more—all through natural language.
+This repository contains the configuration needed to integrate Slack with Cursor IDE and Claude Code. The plugin lets your agents **read** from your Slack workspace — searching and reading messages, threads, channels, and user profiles — all through natural language.
+
+> **🔒 Read-only fork.** This variant is hard-locked to reading. It can never send, post, draft, react, schedule, or otherwise write to Slack. Enforcement is at the harness layer (a `permissions.deny` list plus a default-deny PreToolUse guard hook), not just guidance — see [Read-only enforcement](#read-only-enforcement) below.
 
 ## Features
 
-The Slack MCP server provides the following capabilities:
+The Slack MCP server exposes many capabilities; this fork permits only the read-only ones:
 
 - **Search**: Find messages, files, users, and channels (both public and private)
-- **Messaging**: Send messages, retrieve channel histories, and access threaded conversations
-- **Canvas**: Create and share formatted documents, export content as markdown
+- **Read**: Retrieve channel histories and access threaded conversations
 - **User Management**: Retrieve user profiles including custom fields and status information
+
+Write capabilities the upstream server offers (sending messages, reactions, scheduling, canvas creation) are **blocked** in this fork.
 
 ## Prerequisites
 
@@ -89,10 +92,23 @@ Save the configuration. You will also see a connect button once added. Click tha
 Once configured, you can interact with Slack through your AI assistant using natural language:
 
 - **Search messages**: "Search for messages about the product launch in the last week"
-- **Send messages**: "Send a message to #general channel saying the deployment is complete"
+- **Read channels**: "Summarize the last 50 messages in #engineering"
 - **Find users**: "Who is the user with email john@example.com?"
 - **Access threads**: "Show me the conversation thread from that message"
-- **Create canvases**: "Create a canvas document with our meeting notes"
+
+Write requests (e.g. "send a message to #general") are intentionally refused — the guard hook blocks them before they reach Slack.
+
+## Read-only enforcement
+
+The write tools (`slack_send_message`, `slack_add_reaction`, `slack_schedule_message`, canvas creation, …) are defined by Slack's hosted MCP server, not by this repo — so they can't simply be removed here. Instead this fork blocks them at the **harness layer**, fail-closed and defense-in-depth:
+
+1. **Default-deny guard hook** — [`hooks/slack-readonly-guard.py`](hooks/slack-readonly-guard.py) runs as a `PreToolUse` hook before every Slack tool call. It allows a tool **only** if it is on an explicit read allowlist; everything else — including any *new or unknown* Slack tool — is denied. This is the primary, future-proof guarantee. It is wired via [`hooks/hooks.json`](hooks/hooks.json) (plugin install) and `.claude/settings.json` (in-repo development).
+2. **`permissions.deny` list** — `.claude/settings.json` additionally names the known write tools explicitly, as a visible, static belt.
+3. **No write paths in commands/skills** — the bundled commands and skills compose text for *you* to post; none of them write to Slack.
+
+The allowlisted (permitted) tools are: `slack_read_channel`, `slack_read_thread`, `slack_read_user_profile`, `slack_search_public`, `slack_search_public_and_private`, `slack_search_channels`, `slack_search_users`, `slack_list_channel_members`.
+
+> **Scope:** the harness-hard guarantee targets **Claude Code**. Cursor's hook support differs and `permissions.deny` is a Claude Code construct, so under Cursor only the soft (commands/skills/docs) layer applies. If you need a hard guarantee under any client, point `.mcp.json` at a read-only MCP proxy instead.
 
 ## Documentation & Resources
 

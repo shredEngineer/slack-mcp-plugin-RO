@@ -9,7 +9,7 @@ This skill provides guidance for composing well-formatted, effective Slack messa
 
 ## When to Use
 
-Apply this skill whenever composing, drafting, or helping the user write a Slack message — including when using `slack_send_message`, `slack_send_message_draft`, or `slack_create_canvas`.
+Apply this skill whenever composing or drafting Slack message text for the user. This is a read-only plugin: it formats message text for the user to post themselves and never sends, drafts, or posts to Slack.
 
 ## Formatting
 

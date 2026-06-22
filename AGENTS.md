@@ -1,12 +1,14 @@
 # Slack Plugin
 
-This plugin integrates Slack with Ai tools, providing tools to search, read, and send messages in Slack. It also offers useful skills for users and developers.
+This plugin integrates Slack with Ai tools, providing tools to search and read messages, threads, channels, and users in Slack. It also offers useful skills for users and developers.
+
+**Read-only fork.** This variant never writes to Slack — sending, posting, drafting, reacting, scheduling, and canvas creation are hard-disabled at the harness layer (a `permissions.deny` list plus the default-deny `hooks/slack-readonly-guard.py` PreToolUse hook). See the README's "Read-only enforcement" section. When working in this repo, do not add tools, commands, or skills that write to Slack, and keep the read allowlist in `hooks/slack-readonly-guard.py` as the single source of truth for what is permitted.
 
 ## Commands
 
 - `/slack:summarize-channel <channel-name>` — Summarize recent activity in a Slack channel
 - `/slack:find-discussions <topic>` — Find discussions about a specific topic across Slack channels
-- `/slack:draft-announcement <topic>` — Draft a well-formatted Slack announcement and save it as a draft
+- `/slack:draft-announcement <topic>` — Compose a well-formatted Slack announcement for you to post yourself (does not write to Slack)
 - `/slack:standup` — Generate a standup update based on your recent Slack activity
 - `/slack:channel-digest <channel1, channel2, ...>` — Get a digest of recent activity across multiple Slack channels
 
